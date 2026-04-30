@@ -1,0 +1,58 @@
+# 多Agent系统配置
+
+app:
+  name: "multi-agent-system"
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  log_level: "INFO"
+  cors_origins:
+    - "*"
+
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  password: null
+  max_connections: 50
+
+database:
+  type: "sqlite"
+  path: "./data/agent.db"
+  echo: false
+
+llm:
+  provider: "openai"
+  api_key: "${OPENAI_API_KEY}"
+  base_url: "https://api.openai.com/v1"
+  model: "gpt-3.5-turbo"
+  temperature: 0.7
+  max_tokens: 2000
+  timeout: 60
+
+scheduler:
+  timezone: "Asia/Shanghai"
+  max_workers: 5
+  job_defaults:
+    coalesce: false
+    max_instances: 3
+
+logging:
+  level: "INFO"
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>"
+  rotation: "500 MB"
+  retention: "7 days"
+  sink: "./logs/agent.log"
+
+monitor:
+  enabled: true
+  check_interval: 60
+  alert_threshold: 3
+  notify_channels:
+    - "log"
+    - "webhook"
+
+executor:
+  max_retries: 3
+  retry_delay: 5
+  timeout: 300

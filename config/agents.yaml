@@ -1,0 +1,105 @@
+# Agent配置文件
+
+agents:
+  # 调度Agent - 负责协调其他Agent
+  orchestrator:
+    enabled: true
+    priority: 10
+    max_concurrent_tasks: 10
+    task_timeout: 600
+    channels:
+      - "task_queue"
+      - "agent_status"
+
+  # 内容生成Agent - 负责文案创作
+  content:
+    enabled: true
+    priority: 5
+    llm_model: "gpt-3.5-turbo"
+    output_format: "markdown"
+    max_length: 2000
+    temperature: 0.7
+    channels:
+      - "content_queue"
+      - "llm_requests"
+    capabilities:
+      - "article_generation"
+      - "social_media"
+      - "seo_optimization"
+      - "copywriting"
+
+  # 数据分析Agent - 负责数据采集分析
+  data:
+    enabled: true
+    priority: 5
+    data_sources:
+      - "internal"
+      - "external"
+    cache_ttl: 3600
+    batch_size: 100
+    channels:
+      - "data_queue"
+      - "analytics"
+    capabilities:
+      - "data_collection"
+      - "statistical_analysis"
+      - "report_generation"
+      - "trend_detection"
+
+  # 监控Agent - 负责系统监控告警
+  monitor:
+    enabled: true
+    priority: 8
+    check_interval: 60
+    alert_threshold: 3
+    notification_channels:
+      - "log"
+      - "webhook"
+    channels:
+      - "monitor_queue"
+      - "alerts"
+    metrics:
+      - "cpu_usage"
+      - "memory_usage"
+      - "task_queue_depth"
+      - "agent_health"
+
+  # 执行Agent - 负责具体执行动作
+  executor:
+    enabled: true
+    priority: 6
+    max_retries: 3
+    retry_delay: 5
+    channels:
+      - "executor_queue"
+      - "notifications"
+    capabilities:
+      - "send_email"
+      - "send_webhook"
+      - "http_request"
+      - "file_operation"
+
+# 工作流预设
+workflows:
+  content_pipeline:
+    type: "sequential"
+    steps:
+      - agent: "data"
+        action: "collect_trends"
+      - agent: "content"
+        action: "generate"
+      - agent: "executor"
+        action: "publish"
+
+  analysis_pipeline:
+    type: "parallel"
+    branches:
+      - agent: "data"
+        action: "collect_internal"
+      - agent: "data"
+        action: "collect_external"
+    then:
+      - agent: "data"
+        action: "analyze"
+      - agent: "content"
+        action: "generate_report"
